@@ -1,0 +1,81 @@
+{
+  "id": "7SIPGcW2qNv90fQm",
+  "name": "Fitness Coach Agent - DeepSeek + Telegram",
+  "description": "Персональный коуч-нутрициолог с анализом фото еды",
+  "created": "2025-11-25",
+  "status": "template",
+  
+  "env_required": [
+    "TELEGRAM_BOT_TOKEN",
+    "DEEPSEEK_API_KEY",
+    "AIRTABLE_BASE_ID",
+    "AIRTABLE_API_KEY"
+  ],
+  
+  "airtable_tables": {
+    "Clients": {
+      "fields": [
+        "Telegram_ID",
+        "Name",
+        "Diet_Type",
+        "Current_Weight",
+        "Target_Weight",
+        "Health_Issues",
+        "Deficits",
+        "Morning_Supplements",
+        "Daily_Calories",
+        "Daily_Protein",
+        "Water_Volume",
+        "Steps_Target",
+        "Exercises_Avoid",
+        "Exercises_Prefer"
+      ]
+    },
+    "Chat_History": {
+      "fields": [
+        "Telegram_ID",
+        "User_Message",
+        "Coach_Response",
+        "Timestamp",
+        "Tokens_Used"
+      ]
+    }
+  },
+  
+  "nodes": [
+    {"name": "Telegram Trigger", "type": "telegramTrigger"},
+    {"name": "Extract Data", "type": "set"},
+    {"name": "Check Photo", "type": "switch", "note": "CRITICAL: use full conditions format"},
+    {"name": "Get Photo URL", "type": "httpRequest"},
+    {"name": "Download Photo", "type": "httpRequest"},
+    {"name": "Analyze Photo (DeepSeek Vision)", "type": "httpRequest"},
+    {"name": "Get Client Profile", "type": "httpRequest", "note": "Airtable API"},
+    {"name": "Merge Data", "type": "merge"},
+    {"name": "Build Prompt", "type": "set"},
+    {"name": "DeepSeek Coach", "type": "httpRequest"},
+    {"name": "Send Telegram Reply", "type": "telegram"},
+    {"name": "Log to Airtable", "type": "httpRequest"},
+    {"name": "Error Handler", "type": "set"},
+    {"name": "Send Error Message", "type": "telegram"}
+  ],
+  
+  "flow": {
+    "main": "Telegram → Extract → Check Photo → [photo: Analyze] / [no photo: Get Profile] → Merge → Build Prompt → DeepSeek → Reply → Log",
+    "error": "Error Handler → Send Error Message"
+  },
+  
+  "features": [
+    "Telegram bot integration",
+    "Photo food analysis (DeepSeek Vision)",
+    "Client profiles from Airtable",
+    "Chat history logging",
+    "Error handling",
+    "~90% cheaper than GPT-4"
+  ],
+  
+  "cost_estimate": {
+    "deepseek_per_1k_tokens": "$0.0001",
+    "avg_conversation": "~500 tokens",
+    "cost_per_message": "~$0.00005"
+  }
+}
