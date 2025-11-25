@@ -1,0 +1,84 @@
+{
+  "id": "JF3f6gGYZhEyv6U4",
+  "name": "Make.com Gateway FULL",
+  "active": true,
+  "createdAt": "2025-11-24T23:24:12.835Z",
+  "updatedAt": "2025-11-24T23:26:42.833Z",
+  "webhook": "/webhook/make-gateway-v2",
+  "actions": ["list", "get", "create", "update", "delete", "run", "start", "stop", "clone", "logs"],
+  "nodes": [
+    {
+      "id": "webhook-1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "make-gateway-v2",
+        "httpMethod": "POST",
+        "responseMode": "responseNode"
+      }
+    },
+    {
+      "id": "switch-1",
+      "name": "Switch Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "note": "CRITICAL: Must use full conditions format with options, combinator"
+    },
+    {
+      "id": "list-1",
+      "name": "List Scenarios",
+      "url": "https://eu2.make.com/api/v2/scenarios?organizationId=5038858"
+    },
+    {
+      "id": "get-1",
+      "name": "Get Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}"
+    },
+    {
+      "id": "create-1",
+      "name": "Create Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios?confirmed=true",
+      "note": "blueprint & scheduling must be JSON.stringify() strings, teamId required in body"
+    },
+    {
+      "id": "update-1",
+      "name": "Update Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}"
+    },
+    {
+      "id": "delete-1",
+      "name": "Delete Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}"
+    },
+    {
+      "id": "run-1",
+      "name": "Run Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}/run"
+    },
+    {
+      "id": "start-1",
+      "name": "Start Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}/start"
+    },
+    {
+      "id": "stop-1",
+      "name": "Stop Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}/stop"
+    },
+    {
+      "id": "clone-1",
+      "name": "Clone Scenario",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}/clone"
+    },
+    {
+      "id": "logs-1",
+      "name": "Get Logs",
+      "url": "https://eu2.make.com/api/v2/scenarios/{scenarioId}/logs"
+    },
+    {
+      "id": "response-1",
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook"
+    }
+  ]
+}
