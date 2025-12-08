@@ -1,0 +1,66 @@
+{
+  "name": "Fitness Coach HYBRID v6 (HTTP KEYBOARD)",
+  "id": "2cYC9HEsQm9lqN8y",
+  "version": "v6-stable",
+  "description": "Fitness coaching bot with Groq Llama 4 Scout vision + DeepSeek coaching + HTTP Request for Telegram keyboard",
+  "author": "Brain Index",
+  "created": "2025-12-04",
+  "updated": "2025-12-08",
+  "status": "production-ready",
+  "features": [
+    "Photo analysis via Groq Llama 4 Scout (direct Telegram URLs)",
+    "Personalized coaching via DeepSeek",
+    "Client profiles from Notion",
+    "Telegram keyboard via HTTP Request (not Telegram node)",
+    "Conversation logging to Notion"
+  ],
+  "architecture": {
+    "trigger": "Telegram Trigger (webhook)",
+    "vision": "Groq API - meta-llama/llama-4-scout-17b-16e-instruct",
+    "coaching": "DeepSeek API - deepseek-chat",
+    "database": "Notion (client profiles + logs)",
+    "response": "HTTP Request to Telegram API (with keyboard)"
+  },
+  "nodes": [
+    {"name": "Telegram Trigger", "type": "telegramTrigger"},
+    {"name": "Extract Data", "type": "set"},
+    {"name": "Check Photo", "type": "switch"},
+    {"name": "Get Photo Path", "type": "httpRequest"},
+    {"name": "Groq Vision URL", "type": "httpRequest"},
+    {"name": "Parse Vision Response", "type": "set"},
+    {"name": "Get Client Profile (Notion)", "type": "httpRequest"},
+    {"name": "Merge Data", "type": "merge"},
+    {"name": "Build Prompt", "type": "set"},
+    {"name": "DeepSeek Coach", "type": "httpRequest"},
+    {"name": "Send Telegram with Keyboard", "type": "httpRequest"},
+    {"name": "Light Index to Notion", "type": "httpRequest"},
+    {"name": "Log to Notion", "type": "httpRequest"},
+    {"name": "Error Handler", "type": "set"},
+    {"name": "Send Error Message", "type": "telegram"}
+  ],
+  "connections": {
+    "flow": "Trigger → Extract → Check Photo → [Photo: GetPath → Groq → Parse] + [NoPhoto: GetProfile] → Merge → Build → DeepSeek → Send → Light → Log"
+  },
+  "keyboard": {
+    "type": "ReplyKeyboardMarkup",
+    "buttons": [
+      ["📊 Статистика за неделю"],
+      ["🍎 Вся еда", "☀️ Завтраки"],
+      ["🌤️ Обеды", "🌙 Ужины"],
+      ["📥 Экспорт в Google Таблицу"]
+    ],
+    "resize_keyboard": true,
+    "one_time_keyboard": false
+  },
+  "credentials_required": [
+    "TELEGRAM_BOT_TOKEN",
+    "GROQ_API_KEY", 
+    "DEEPSEEK_API_KEY",
+    "NOTION_API_KEY"
+  ],
+  "notion_databases": {
+    "clients": "7527cf8218ea47c2a7f484787f13da19",
+    "logs": "135c65d3f8844505a7460bc36ba14ae4"
+  },
+  "notes": "v6 uses HTTP Request instead of Telegram node for sendMessage to properly support reply_markup keyboard object"
+}
